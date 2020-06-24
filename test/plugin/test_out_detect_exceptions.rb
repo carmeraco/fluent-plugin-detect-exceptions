@@ -259,6 +259,20 @@ multiline_flush_interval 1)
     assert_equal(['prefix.plus.rest.of.the.tag'], tags)
   end
 
+  def test_add_newlines
+    cfg = %(
+#{CONFIG}
+add_newlines true)
+    d = create_driver(cfg)
+    t = Time.now.to_i
+    d.run do
+      feed_lines(d, t, PYTHON_EXC)
+    end
+
+    expected = [PYTHON_EXC.lines[0..-1].join("\r\n")]
+    assert_equal(make_logs(t, *expected), d.events)
+  end
+
   def test_flush_after_max_lines
     cfg = %(
 #{CONFIG}

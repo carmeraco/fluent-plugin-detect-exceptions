@@ -258,11 +258,11 @@ module Fluent
     # for some pre-defined common field names of text logs.
     # The named parameters max_lines and max_bytes limit the maximum amount
     # of data to be buffered. The default value 0 indicates 'no limit'.
-    def initialize(message_field, languages, max_lines: 0, max_bytes: 0,
-                   &emit_callback)
+    def initialize(message_field, languages, **options, &emit_callback)
+      @add_newlines = options[:add_newlines] || false
       @exception_detector = Fluent::ExceptionDetector.new(*languages)
-      @max_lines = max_lines
-      @max_bytes = max_bytes
+      @max_lines = options[:max_lines] || 0
+      @max_bytes = options[:max_bytes] || 0
       @message_field = message_field
       @messages = []
       @buffer_start_time = Time.now
@@ -295,7 +295,8 @@ module Fluent
       when 1
         @emit.call(@first_timestamp, @first_record)
       else
-        combined_message = @messages.join
+        combined_message = @messages.join(@add_newlines ? "\r\n" : '')
+
         if @message_field.nil?
           output_record = combined_message
         else

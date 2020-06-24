@@ -99,6 +99,9 @@ The plugin supports the following parameters:
           This parameter is only applicable to structured (JSON) log streams.
           Default: ''.
 
+[add_newlines]  Set to true to add newlines to the joined exception.
+                Default: false.
+
 Example configuration:
 
     <match **>
